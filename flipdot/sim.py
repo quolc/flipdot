@@ -151,10 +151,10 @@ def stop_curses():
 
 
 if __name__ == "__main__":
-    sim = DisplaySim(28, 14,
+    sim = DisplaySim(56, 7,
                      panels={
                          2: ((0, 0), (28, 7)),
-                         1: ((0, 7), (28, 7)),
+                         1: ((28, 0), (28, 7)),
                         })
     try:
         init_curses()

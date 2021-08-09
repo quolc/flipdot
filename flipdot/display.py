@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 
 class Display(object):
 
-    def __init__(self, w, h, panels=None):
+    def __init__(self, w, h, panels=None, upsidedown=False):
         """
         Construct a display of given width and height, with the given ID.
         Note that we use and RGB backing image since some PIL implementations
@@ -35,6 +35,7 @@ class Display(object):
             self.panels = {
                 1: ((0, 0), (w, h)),
             }
+        self.upsidedown = upsidedown
 
     def connect(self, client):
         """
@@ -73,13 +74,22 @@ class Display(object):
 
     def to_bytes(self, address):
         px = self.im.load()
+
         (xs, ys), (w, h) = self.panels[address]
         result = bytearray()
-        for x in range(xs, xs + w):
+
+        if self.upsidedown:
+            xrange = range(xs + w - 1, xs - 1, -1)
+            yrange = range(0, h)
+        else:
+            xrange = range(xs, xs + w)
+            yrange = range(h-1, -1, -1)
+
+        for x in xrange:
             if h is not 7:
                 print("H is not 7!!!!")
             b = 0
-            for y in range(h-1, -1, -1):
+            for y in yrange:
                 p = self.px_to_bit(px[x, ys + y])
                 b = (b << 1) | p
             result.append(b)
